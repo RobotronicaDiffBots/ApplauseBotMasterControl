@@ -19,7 +19,7 @@ ArrayList<byte[]> outbox = new ArrayList<byte[]>();
 // [9] crc:
 void serialEvent(Serial whichPort) {
   try {
-    if (true){ // whichPort == handController) {
+    if (whichPort == handController) {
 
       whichPort.readBytes(inBuffer);
 
@@ -55,7 +55,6 @@ void serialEvent(Serial whichPort) {
 }
 
 // Process a message received from the hand controller. 
-// For now I will just print it to serial.
 void processMsg(byte[] msg) {
   if (!checkValidMsg(msg)) {
     //    println("invalid message");

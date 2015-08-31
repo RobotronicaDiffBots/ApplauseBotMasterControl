@@ -71,8 +71,6 @@ class ServoGraphic{
 
     textSize(8);
     
-//    int rawCurrent = 
-    
     if(direction == 1){
       text(int(currentPosition), 10, 12);
     }

@@ -18,12 +18,12 @@ class XBee {
 
   // Global variable sent & incremeneted with each xBee message.
   byte seqno;
-//  Serial serial;
+  Serial serial;
 
   XBee(int xbeePort, int baudRate, PApplet sketch) {
     // Set up serial object for xbee communication.
     // use 'printArray(Serial.list())' to find xbee port number.
-//    serial = new Serial(sketch, Serial.list()[xbeePort], baudRate);
+    serial = new Serial(sketch, Serial.list()[xbeePort], baudRate);
   }
 
   void sendMsg(byte rId, byte type, byte d1, byte d2, byte d3, byte d4) {
@@ -34,22 +34,17 @@ class XBee {
     };
 
     // Calculate a crc for the message. This will be included as the last byte.
-    byte crc = 0;
-    for (int i = 0; i < msg.length - 1; i++) {
-      crc ^= msg[i];
-    }
+    byte crc = generateCrc(msg);
     msg[msg.length - 1] = crc;
 
-//    serial.write(msg);
+    serial.write(msg);
   }
 
   // Retransmit message received from hand controller. We need to 
   // add a new seqno and recalculate the crc.
   void relayMsg(byte[] msg) {
-    // type, byte d1, byte d2, byte d3, byte d4) {
 
-    //    printMsg(msg);  
-
+    // First, check which button (if any) was pressed on the hand controller.
     byte button = msg[7];
 
     // Check for movement or rotation
@@ -58,7 +53,7 @@ class XBee {
       if (msg[4] != msg[5]) {
         relayRotation(msg);
       }
-      // Ignore movement
+      // Movement
       else {
         relayMovement(msg);
       }
@@ -70,19 +65,16 @@ class XBee {
     // Left-Middle button
     else if (button == byte(2)) {
       relayUnchanged(msg);
-//      println("L-M");
     }
     // Left-In button
     else if (button == byte(4)) {
       relayUnchanged(msg);
-//      println("L-I");
     }
     // Left-Shoulder button
     else if (button == byte(8)) {
-//      println("L-S");
-    } else {
-      // Ignore the rest.
     }
+    
+    // Ignore the rest.
     //    // Right-In button
     //    else if (button == byte(16)) {
     //      println("R-I");
@@ -99,6 +91,7 @@ class XBee {
     //    else if (button == byte(128)) {
     //      println("R-S");
     //    }
+    
   }
 
   void relayRotation(byte[] msg) {
@@ -120,7 +113,7 @@ class XBee {
 
         crc = generateCrc(msg);
         msg[msg.length - 1] = crc;
-//        serial.write(msg);
+        serial.write(msg);
       }
     }
   }
@@ -130,7 +123,7 @@ class XBee {
     msg[msg.length - 2] = seqno;
     byte crc = generateCrc(msg);
     msg[msg.length - 1] = crc;
-//    serial.write(msg);
+    serial.write(msg);
   }
   
   void relayLightUp(){
@@ -144,7 +137,7 @@ class XBee {
     msg[msg.length - 2] = seqno;
     byte crc = generateCrc(msg);
     msg[msg.length - 1] = crc;
-//    serial.write(msg);
+    serial.write(msg);
   }
 }
 
